@@ -1,0 +1,47 @@
+algorithm of pkm
+
+objective: to simulate the battle between 火球鼠 and 菊草葉.
+
+PROCESSING
+1. INPUT
+
+2. Output
+
+3. Datatype
+- class of pokemon
+- hp // hit point
+- atk // attack
+- def // defense
+- spAtk // special attack
+- spDef // special defense
+- spd // speed
+- mv1 // move1
+- mv2 // move2
+- mv3 // move3
+- mv4 // move4
+- lv // level
+- exp // experience
+- ability // special ability
+
+4. PROCESSING
+1. Create 火球鼠
+2. Create 菊草葉
+3. Computer select a move.
+4. Human select a move.
+5. compare the speed
+6. calculate the damage
+7. update the hp
+8. go back to step 3, until hp <=0
+
+C. Instruction
+10 Create a class call Pokemon
+20 Create a class call move
+30 use the main function to start the battle.
+40 Create 火球鼠 and 菊草葉
+50 Generate a random number from 0 to 3, and choice a move
+60 User choose a move
+70 Compare the speed of the pokemon
+80 pkm1 hp minus the damage, if hp <=0, the battle end, skip to 999
+90 pkm2 hp minus the damage, if hp<=0, the battle end, skip to 999
+100 if hp >0, then go back to instruction 50
+999 End

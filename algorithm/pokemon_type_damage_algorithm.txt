@@ -1,0 +1,10 @@
+objective: 根據傷害table，表示屬性相剋。
+
+A. Processing
+1. Input
+- pkm1_mv1_type //第一隻pokemon 的攻擊 type
+- pkm2_type // 第二隻 pokemon 的屬性
+
+用 pandas 來整了一個 table
+1. 先從 網站 找出一個 table, 然後將它convert做一個 dataframe table
+3. 再用 loc[atk, defender]來找出
