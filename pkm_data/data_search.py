@@ -1,16 +1,15 @@
+import pokemon
 
-
-
-def search_pokemon(table=pokemon_table, number):
-    row = all_pokemon_df_2[all_pokemon_df_2['全國編號']==number]
-
-    hp = int(row['hp'][0])
-    atk = int(row['atk'][0])
-    df = int(row['df'][0])
-    spAtk = int(row['spAtk'][0])
-    spDf = int(row['spDf'][0])
-    spd = int(row['spd'][0])
-    ability = row['特性1'][0]
-    type1 = row['屬性1'][0]
-    type2 = row['屬性2'][0]
-    return (hp, atk, df, spAtk, spDf, spd, abililty, type1, type2)
+def search_pokemon(number, table):
+    row = table[table['全國編號']==number]
+    name = row['中文名稱'].iloc[0]
+    hp = int(row['hp'].iloc[0])
+    atk = int(row['atk'].iloc[0])
+    df = int(row['df'].iloc[0])
+    spAtk = int(row['spAtk'].iloc[0])
+    spDf = int(row['spDf'].iloc[0])
+    spd = int(row['spd'].iloc[0])
+    ability = row['特性1'].iloc[0]
+    type1 = row['屬性1'].iloc[0]
+    type2 = row['屬性2'].iloc[0]
+    return pokemon.Pokemon(number, name, hp, atk, df, spAtk, spDf, spd, ability, type1, type2, mv1='撞擊', mv2='流星閃沖', mv3='月亮之力', mv4='制裁光礫', lv=100)

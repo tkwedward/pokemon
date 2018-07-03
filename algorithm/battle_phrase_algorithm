@@ -1,0 +1,28 @@
+- 關於戰鬥次序的 algorithm
+Objective︰ Simulate the battle stages
+0. Global variable
+- 天氣、場地、牆壁、效果
+- 精靈列表1
+- 精靈列表2
+
+1. the initial phrase:
+- 剛出場時的特性，例如威嚇等等
+- 改變天氣
+
+2. preparation phrase, user choose to use fight, chance pkm, use tools or escape
+- 選擇出招或是更換精靈等等
+
+3. battle phrase
+- 更換精靈，如果換了精靈，就無法出招 (active=False, otherwise active=True)
+- 戰鬥，決定先後次序
+- 先制技 -> 出招是否成功 (麻痺、命中率) -> 特性的效果(如大力士等等) -> 計算傷害 -> 招式的特殊效果、狀態變化
+
+4. before round end phrase
+- 扣血︰如中毒、火焰
+- 天氣傷害、特性補血等等
+
+5. 更換精靈系統
+- 六隻精靈
+
+Processing
+1.
