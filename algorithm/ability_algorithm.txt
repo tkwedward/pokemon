@@ -1,0 +1,45 @@
+特性分類
+1. 減對方能力
+
+2. 增加已方能力
+
+3. 減對方血
+
+4. 加自己血
+
+5. 
+
+方法一︰
+為每個 ability 寫一個 function，然後類似的分成同一類
+但是這樣好像要寫太多。
+
+減低對方能力類
+名︰威嚇
+解說︰出場時減低對方攻擊力一個等級
+對像︰team2.active 的精靈， atk
+counter: 1
+實際 function:
+
+增加己方能力類︰
+名︰加速
+解說︰每個回合增加速度一個等級
+counter︰每個回合
+對像︰team1.active 的精靈, spd
+
+令對方陷入異常狀能類
+名︰靜電、毒針、火焰身體
+方案1︰
+- 在pokemon class上增加新一個 attribute，攻擊by哪一個 (atk_by:somebody)
+def effect(self, opponent, state):
+    # num 為 1-10 其中一個數字
+    num = randint(1,10)
+	if num <=3:
+        opponent.state = STATE('麻痺')
+    else:
+        pass
+
+
+
+防止陷入異常狀態類
+名︰不眠、脫皮、免疫
+

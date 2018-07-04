@@ -1,5 +1,24 @@
+import pandas as pd
+from pkm_data.path_utility import r_path
 
-def six_value(strength, effort=0, individual=0, lv=5, special=None, char=1.0):
+pokemon_table = pd.read_csv(r_path('pkm_data/pokedex/all_pkm.csv'))
+
+def search_pokemon(number, table=pokemon_table):
+    row = table[table['全國編號']==number]
+    name = row['中文名稱'].iloc[0]
+    hp = int(row['hp'].iloc[0])
+    atk = int(row['atk'].iloc[0])
+    df = int(row['df'].iloc[0])
+    spAtk = int(row['spAtk'].iloc[0])
+    spDf = int(row['spDf'].iloc[0])
+    spd = int(row['spd'].iloc[0])
+    ability = row['特性1'].iloc[0]
+    type1 = row['屬性1'].iloc[0]
+    type2 = row['屬性2'].iloc[0]
+    return Pokemon(number, name, hp, atk, df, spAtk, spDf, spd, ability, type1, type2, mv1='撞擊', mv2='流星閃沖', mv3='月亮之力', mv4='制裁光礫', lv=100)
+
+
+def six_value(strength=None, effort=0, individual=0, lv=5, category=None, char=1.0):
     """
     arg:
     strength 為六圍其中之一，hp, atk, def, ...
@@ -12,7 +31,7 @@ def six_value(strength, effort=0, individual=0, lv=5, special=None, char=1.0):
     return:
     # 由種族值計算出來的 具體數值
     """
-    if special == 'hp':
+    if category == 'hp':
         return round(((strength*2.0 + individual + effort/4.0)*(lv/100.0)) + lv + 10.0)
     else:
         return round(((strength*2.0 + individual + effort/4.0)*(lv/100.0) + 5.0) * char)
@@ -35,17 +54,18 @@ class Pokemon(object):
     type2:屬性2
     state:狀態
     """
-    def __init__(self, number, name, hp, atk, df, spAtk, spDef, spd,   ability=None, character=None, individual=0, effort=0, lv=5, exp=0 , type1=None, type2=None, state=None, sex='M', mv1=None, mv2=None, mv3=None, mv4=None):
+    def __init__(self, number, name, hp, atk, df, spAtk, spDef, spd, ability=None, character=None, individual=0, effort=0, lv=5, exp=0 , type1=None, type2=None, status=None, sex='M', mv1=None, mv2=None, mv3=None, mv4=None):
         self.number = number
         self.name = name
-        self.hp = six_value(hp, lv=lv, special='hp')
+        self.hp = six_value(hp, lv=lv, category='hp')
         self.atk =six_value(atk, lv=lv)
         self.df =six_value(df, lv=lv)
         self.spAtk =six_value(spAtk, lv=lv)
         self.spDef =six_value(spDef, lv=lv)
         self.spd =six_value(spd, lv=lv)
+        self.strength_list = {'hp':self.hp, 'atk':self.atk, 'df':self.df, 'spAtk': self.spAtk, 'spDef': self.spDef, 'spd':self.spd}
         self.sex = sex
-        self.strength = hp + atk + df + spAtk + spDef + spd
+        self.total_strength = hp + atk + df + spAtk + spDef + spd
         self.mv1 = mv1
         self.mv2 = mv2
         self.mv3 = mv3
@@ -53,6 +73,7 @@ class Pokemon(object):
         self.lv = lv
         self.type = (type1, type2)
         self.movable = True # 可以戰鬥嗎？
+        self.counter = 0
 
     def __repr__(self):
         # return "{}".format(self.name)

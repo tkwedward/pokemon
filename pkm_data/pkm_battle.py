@@ -1,11 +1,15 @@
+import copy
 import pandas as pd
 import numpy as np
 from random import randint
 from pkm_data.path_utility import r_path
 from pokemon import Pokemon, Move
+from pkm_data.status import BURN, FROZEN, PARALYZE, POISON, Event
+from pkm_data.general_function import check_end 
 
+move_table = pd.read_csv(r_path('pkm_data/move_table/total_move.csv'))
 
-def search_move_table(name, move_table):
+def search_move_table(name, move_table=move_table):
     """
     arg:
     name: 招式的名稱
@@ -26,21 +30,20 @@ def search_move_table(name, move_table):
     special =None # 有沒有特殊效果
     return Move(name, category=category, damage=damage, accuracy=accuracy, pp=pp, offset=offset, special=special, m_type=m_type)
 
-def return_move_list(mv1, mv2, mv3, mv4, move_table):
+def return_move_list(mv1, mv2, mv3, mv4):
     """
     arg:
     mv1, mv2, mv3, mv4︰4種招式的名稱
-    move_table︰招式表
 
     return︰
     4招招式的list
 
     主要透過 search_move_table 這個 function，在招式表中找尋四招招式
     """
-    a = search_move_table(mv1, move_table)
-    b = search_move_table(mv2, move_table)
-    c = search_move_table(mv3, move_table)
-    d = search_move_table(mv4, move_table)
+    a = search_move_table(mv1)
+    b = search_move_table(mv2)
+    c = search_move_table(mv3)
+    d = search_move_table(mv4)
     return (0, a, b, c, d)
 
 # 用來計算傷害, modifier 是天氣等等因素來計算
@@ -77,7 +80,24 @@ def cal_damage(attacker, defender, move):
 
 def attack_order(attack_team, defense_team, attack_move):
     """
+    attack_team: 攻擊者的 team object
+    10 check attack pkm 是否有麻痺
+    20 check 是否有燒傷
+    25 check 是否凍傷
+    30 chekc attack pokemon 是否 movable
+
     """
+    # 1. check attack pkm 是否有麻痺
+    if isinstance(attack_team['active'].status , PARALYZE):
+        attack_team['active'].movable =  PARALYZE.battle_effect(attack_team['active'])
+
+    if isinstance(attack_team['active'].status , FROZEN):
+        attack_team['active'].movable =  FROZEN.battle_effect(attack_team['active'])
+
+    if isinstance(attack_team['active'].status , BURN):
+        attack_team['active'].atk =  BURN.strength_effect(attack_team['active'])
+        print(attack_team['active'].atk)
+
     if attack_team['active'].movable==False:
         pass
     else:
@@ -85,55 +105,3 @@ def attack_order(attack_team, defense_team, attack_move):
     loop =check_end(defense_team['active'], defense_team) # check 是否死了
 
     return loop
-
-
-# check game 結束了嗎？
-def check_end(pkm, team):
-    """
-    args
-    pkm_hp︰pokemon 餘下多少血
-
-    return
-    loop = False，break the loop
-    """
-    if pkm.hp<=0.0:
-        print('{}倒下了'.format(pkm.name))
-        # 從隊伍中移除死了的精靈
-        position = team['team_list'].index(pkm)
-        team['death'].append(team['team_list'].pop(position))
-        print(team)
-
-
-        if len(team['team_list'])==0:
-            # 如果沒有精靈了，就 end loop
-            return False
-        else:
-            # 如果還有，那麼就選下一隻出場的 pokemon
-            team['active'] = change_pokemon(team)
-            team['active'].movable =False
-            return True
-    else:
-        return True
-
-def change_pokemon(team):
-    """
-    data:
-    team_list: a list of pokemon
-    team_list_string: the label to user about which pokemons are left in the team
-    pkm_next_number: the input of the user, which tell the program that the one they want to choose.
-
-    return:
-    Next pokemon instance in the list
-    """
-    team_list = [ str(num)+'. '+str(pkm_name) for num, pkm_name in enumerate(team['team_list'])]
-    team_list_string = ', '.join(team_list)
-
-    if team['player']=='human':
-        print('請選擇出哪一隻精靈？')
-        print(team_list_string)
-        pkm_next_number = int(input())
-    else:
-        pkm_next_number = randint(0,len(team['team_list'])-1)
-        print('敵方派出了'+str(team['team_list'][pkm_next_number]))
-
-    return team['team_list'][pkm_next_number]
