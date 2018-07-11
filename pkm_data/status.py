@@ -5,6 +5,12 @@ from pkm_data.general_function import Probability, check_end
 from pkm_data.path_utility import r_path
 from pokemon import Pokemon, Move
 
+class FEAR(object):
+    name = "畏懼"
+    def effect(pkm):
+        pkm.target.movable =
+        print("{}{}畏懼，無法使出招式。".format(pkm.identity, pkm.name))
+
 class BURN(object):
     """
     class BURN
@@ -55,14 +61,14 @@ class FROZEN(object):
     name="凍傷"
 
     def battle_effect(pkm):
-        print('{}被冰凍了，無法移動'.format(pkm.name))
+        print('{}被冰凍了，無法移動'.format(pkm.identity + pkm.name))
         return False
 
     def heal(pkm):
         result = Probability(0.20)
         if result:
             pkm.status = None
-            print('{}解除了冰凍'.format(pkm.name))
+            print('{}解除了冰凍'.format(pkm.identity + pkm.name))
         else:
             return None
 
@@ -95,7 +101,7 @@ class PARALYZE(object):
     def battle_effect(pkm):
         result = Probability(0.25)
         if result:
-            print('{}因為麻痺，無法出招'.format(pkm.name))
+            print('{}因為麻痺，無法出招'.format(pkm.identity + pkm.name))
             return False
         else:
             return None
@@ -125,10 +131,10 @@ class POISON(object):
     def __inti__(self):
         pass
 
-    def damage(pkm, team):
+    def damage(pkm):
         damage =int(pkm.strength_list['hp']*1/8.0)
         pkm.hp -=damage
-        print("{}因中毒而失去{}點hp".format(pkm.name, damage))
+        print("{}因中毒而失去{}點hp".format(pkm.identity + pkm.name, damage))
 
 class BADLY_POISON(object):
     """
@@ -152,10 +158,10 @@ class BADLY_POISON(object):
     def __inti__(self):
         pass
 
-    def damage(pkm, team):
+    def damage(pkm):
         pkm.counter += 1
         damage =int(pkm.strength_list['hp']*pkm.counter/16.0)
         pkm.hp -=damage
 
-        print("{}因猛毒而失去{}點hp".format(pkm.name, damage))
-        check_end(pkm, team)
+        print("{}因猛毒而失去{}點hp".format(pkm.identity + pkm.name, damage))
+        check_end(pkm)

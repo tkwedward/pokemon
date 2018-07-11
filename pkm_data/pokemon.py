@@ -11,7 +11,7 @@ def six_value(strength, effort=0, individual=0, lv=5, special=None, char=1.0):
         return round(((strength*2 + individual + effort/4)*(lv/100) + 5) * char)
 
 class Pokemon(object):
-    def __init__(self, number, name, sex, mv1, mv2, mv3, mv4, hp, atk, df, spAtk, spDef, spd, individual=0, effort=0,  ability=None, character=None, lv=5, exp=0 ):
+    def __init__(self, number, name, sex, mv1, mv2, mv3, mv4, hp, atk, df, spAtk, spDef, spd, individual=0, effort=0,  ability=None, character=None, lv=5, exp=0, status=None):
         self.name = name
         self.hp = six_value(hp, special='hp')
         self.atk =six_value(atk)
@@ -25,6 +25,8 @@ class Pokemon(object):
         self.mv2 = move(mv2)
         self.mv3 = move(mv3)
         self.mv4 = move(mv3)
+        self.status = status
+        self.target = None
 
     def __repr__(self):
         return "{}, hp為{}, 攻擊為{}, 防禦為{}, 特攻為{}, 特防為{}, 速度為{}, 種族值為{}。".format(self.name, self.hp, self.atk, self.df, self.spAtk, self.spDef, self.spd, self.strength)

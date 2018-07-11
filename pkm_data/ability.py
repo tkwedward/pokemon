@@ -3,70 +3,85 @@ import numpy as np
 from random import randint
 from pkm_data.path_utility import r_path
 from pkm_data.general_function import Probability, check_end
+from pkm_data.weather import RAIN, HEAVY_RAIN, SUNNY, HARSH_SUNLIGHT
+from pkm_data.status import FEAR
 from pokemon import Pokemon, Move
 
-"""
-增加己方能力類︰
+
+ability_map = [('降雨', CHANGE_WEATHER)]
 
 
 
+class ABILITY(object):
+    """
+    name = 能力
+    """
+    def __init__(self, name, explanation=None):
+        self.name = name
+        self.explanation = explanation
+
+class CHANGE_WEATHER(ABILITY):
+    """
+    改變天氣
+    降雨	あめふらし	Drizzle	出場時，會將天氣變為下雨。
+    無關天氣	ノーてんき	Cloud Nine	任何天氣的影響都會消失。
+    stage 0 = 在回合開始時就發動
+    """
+    stage = 0
+    def __init__(self,name):
+        self.name = name
+
+    def effect(self, pkm):
+        pkm.event['weather'] = HEAVY_RAIN()
 
 
-- 引火	もらいび	Flash Fire	受到火屬性的招式攻擊時，吸收火焰，讓自己使出的火屬性招式變強。
-- 威嚇	いかく	Intimidate	出場時威嚇對手，使其退縮，從而降低對手的攻擊。
-
-
-class ABILILTY_CHANGE(name, explain)
-    name = 能力名稱
-    explain = 能力解說
-    (pkm, attack_by, 沙隱, +1/2, Agility ,condition=SANDSTROM)
-
+class STATS_CHANGE(ABILITY):
+    # - 威嚇	いかく	Intimidate	出場時威嚇對手，使其退縮，從而降低對手的攻擊。
+    """
+    改變能力的效果
+    stage 0 = 回合開始時發動
+    沙隱, 引火
     (pkm, 加速, +1/2, spd, condition=None)
     (pkm, 複眼, +1/8, accurarcy , condition=)
-
-
     (pkm, water type, 儲水, +1/8, hp , condition=)
     (pkm, electric type, 蓄電, +1/8, hp , condition=)
+    """
+    stage = 0
 
-    method(pkm, pkm2, change, value, condition=None):
-    arg
-        - pkm: 攻擊的精靈(可以是自己，亦可以是對方)
-        - pkm2: 防守的精靈(可以是自己，亦可以是對方)
-        - change: 改變的能力
-        - value: 改變的數值, +/- double
+    def effect(target, stats, modifier, condition=None):
+        stats_value = getattr(target, stats)
+        setattr(target, stats, stats_value * modifier)
 
-    return:
-        能力或 hp 的改變
-"""
-
-"""
-粗糙皮膚	さめはだ	Rough Skin	受到攻擊時，用粗糙的皮膚弄傷接觸到自己的對手。
-
-"""
-
-"""
-令對方陷入異常狀能類
-名︰靜電、毒針、火焰身體
-- 孢子	ほうし	Effect Spore	透過攻擊有時會使接觸到自己的對手，陷入中毒、麻痺或睡眠狀態。
-- 同步	シンクロ	Synchronize	將自己的中毒、麻痺或灼傷狀態傳染給對手。
-方案1︰
-
-class STATUS_CHANGE(name, explain)
-    name = 能力名稱
-    explain = 能力解說
-
-    method(pkm, attack_by, status, probability):
+class SPECIAL_CONDITION(ABILITY):
+    """
+    令對手陷入異常狀態
+    名︰靜電、毒針、火焰身體、孢子、同步
+    stage 3 = 計算傷害回合發動效果
+    effect(pkm):
     arg
         - pkm: 防守的精靈(可以是自己，亦可以是對方)
-        - attack_by: 攻擊的精靈(可以是自己，亦可以是對方)
-        - status: 被改變的能力
+        - pkm.attacked_by: 向己方發動攻擊的精靈
+        - pkm.attacked_by.status: 對方的狀態
 
     processing:
     10 計算Probability
     20 如果中奬，就會令 pkm.attack_by.status = status
     30 如果沒有中奬，那麼就沒有事
+    """
+    stage = 3
+    def effect(pkm, status):
+        pass
 
-"""
+class REDUCE_HP(ABILITY):
+    """
+    減低對方 HP 類 (粗糙皮膚)
+    - 利用 self.attacked_by, self.attacked_move 來做定位
+    - 在每次 attack 完後的 phase 就會生效
+    """
+    stage = 'after_attack'
+    def effect(pkm):
+        pkm.attack_by.hp -= pkm.attack_by * 1/16.0
+
 
 """
 不會陷入異常狀能類
@@ -74,14 +89,10 @@ class STATUS_CHANGE(name, explain)
 - 遲鈍	どんかん	Oblivious	感覺遲鈍，不會陷入著迷和被挑釁狀態。
 - 不眠	ふみん	Insomnia	因為擁有不會睡覺的體質，所以不會陷入睡眠狀態。
 - 我行我素	マイペース	Own Tempo	因為我行我素，不會陷入混亂狀態。
+- 免疫	めんえき	Immunity	因為體內擁有免疫能力，不會陷入中毒狀態。
 """
 
-"""
-改變天氣
-降雨	あめふらし	Drizzle	出場時，會將天氣變為下雨。
-無關天氣	ノーてんき	Cloud Nine	任何天氣的影響都會消失。
-免疫	めんえき	Immunity	因為體內擁有免疫能力，不會陷入中毒狀態。
-"""
+
 
 """
 - 免受傷害類型
@@ -103,3 +114,44 @@ class STATUS_CHANGE(name, explain)
 - 踩影	かげふみ	Shadow Tag	踩住對手的影子使其無法逃走或替換。
 - 神奇守護	ふしぎなまもり	Wonder Guard	不可思議的力量，只有效果絕佳的招式才會擊中自己。
 """
+
+class Stench(object):
+    name = "惡臭"
+    explain = "以招式給予對手傷害時，有10%的機率使對手出現「畏懼」反應。※ 冒險效果： 排在隊伍最前面時，遭遇野生的Pokemon減為0.5倍。於戰爭金字塔內減為0.75倍。"
+
+    def effect(pkm):
+        if Probability(10):
+            pkm.one_turn_effect = FEAR()
+
+class Speed_Boost(object):
+    name = "加速"
+    effect = "every_turn"
+    counter = 1
+
+    def effect(pkm):
+        if counter<=6:
+            pkm.spd = (1+counter*0.5) * pkm.strength_list['spd']
+            counter+=1
+
+class Drizzle(object):
+    name = "降雨"
+    def effect(pkm):
+        pkm.event['weather'] = WEATHER()
+
+class Battle_Armor(object):
+    name = "戰鬥盔甲"
+    explain = "被堅硬的甲殼守護著，不會被對手的攻擊擊中要害"
+    def effect(pkm):
+        pass
+
+class Sturdy(object):
+    name = "結實"
+    explain = "受到對手的招式攻擊時不會被一擊打倒。一擊必殺的招式也沒有效果。"
+    def effect(pkm):
+        pass
+
+class Sturdy(object):
+    name = "濕氣"
+    explain = "透過把周圍都弄濕，使誰都無法使用自爆等爆炸類的招式。"
+    def effect(pkm):
+        pass

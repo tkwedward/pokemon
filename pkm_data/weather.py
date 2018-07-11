@@ -29,8 +29,14 @@ class WEATHER(object):
     def __str__(self):
         return self.name
 
-    def count_down(self):
+    def effect(self, pkm=None):
         self.count -= 1
+        if self.count==-1:
+            print(self.stop)
+            del self
+
+        else:
+            print(self.text)
 
 
 
@@ -40,6 +46,8 @@ class RAIN(WEATHER):
     count: 持續多少回合
     """
     name = '大雨'
+    text = '正在下雨'
+    stop = '雨停了'
 
     def __str__(self):
         return self.name
@@ -53,6 +61,8 @@ class HEAVY_RAIN(WEATHER):
     effect = 效果解說
     """
     name="暴雨"
+    text = '正在下暴雨，大家都快被水沖走了'
+    stop = '暴雨停了'
 
 class SUNNY(WEATHER):
     """
@@ -63,6 +73,8 @@ class SUNNY(WEATHER):
     effect = 效果解說
     """
     name="晴天"
+    text = '天氣非常晴朗'
+    stop = '晴天停止了'
 
 
 class HARSH_SUNLIGHT(WEATHER):
@@ -102,12 +114,12 @@ class SANDSTORM(object):
     def __str__(self):
         return self.name
 
-    def damage(self, pkm, team):
+    def damage(self, pkm):
         damage =int(pkm.strength_list['hp']/16.0)
         pkm.hp -=damage
 
         print("{}因{}而失去{}點hp".format(pkm.name, self.name, damage))
-        check_end(pkm, team)
+        check_end(pkm)
 
 
 class STRONG_WIND(object):

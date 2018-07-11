@@ -72,8 +72,27 @@ class Pokemon(object):
         self.mv4 = mv4
         self.lv = lv
         self.type = (type1, type2)
-        self.movable = True # 可以戰鬥嗎？
+        self.ability = ability
+
+
+        # 戰鬥用
         self.counter = 0
+        self.team = None # 這隻精靈的隊伍
+        self.opponent_team = None # 敵方精靈的隊伍
+        self.identity = None # 我方或是敵方
+        self.event = None # 戰鬥時的 event_dict
+
+        self.status = None # 進入戰鬥時有沒有異常狀態
+        self.movable = True # 可以戰鬥嗎？
+        self.move_list = None # 招數表
+        self.active_pkm_list = None # 所有active 的pkm
+        self.round_move = None # 這round 用甚麼招數
+        self.target = None # 這 round 的目標是誰
+        self.attacked_by = None # 被誰攻擊了
+        self.attacked_move = None # 被甚麼 攻擊招數攻擊到
+
+        self.ability_parameter_1 = None # ability 的 parameter, 可能是 rain, 或是上升能力的 parameter
+        self.ability_parameter_2 = None # ability 的 parameter, 可能是 rain, 或是上升能力的 parameter
 
     def __repr__(self):
         # return "{}".format(self.name)
@@ -81,7 +100,9 @@ class Pokemon(object):
 
     def __str__(self):
         return "{}".format(self.name)
-        # return "{}, hp為{}, 攻擊為{}, 防禦為{}, 特攻為{}, 特防為{}, 速度為{}, 種族值為{}。".format(self.name, self.hp, self.atk, self.df, self.spAtk, self.spDef, self.spd, self.strength)
+
+    def pkm_status_report(self):
+        return "{}, hp為{}, 攻擊為{}, 防禦為{}, 特攻為{}, 特防為{}, 速度為{}。".format(self.name, self.hp, self.atk, self.df, self.spAtk, self.spDef, self.spd)
 
 class Move(object):
     """

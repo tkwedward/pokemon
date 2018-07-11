@@ -1,3 +1,10 @@
+"""
+1. 現在有的只是特性的名稱，但沒有其內容
+2. 問題是如何連結這個特性與這個 model
+3. def 一個 get nature 的function，如果是能力改變，就用 ABILITY_CHANGE 來整一個 instance
+4. 所以在 ability table 中，要加入一個新的欄目，這個欄目的功用是用作 filter
+"""
+
 特性分類
 1. 減對方能力
 
@@ -7,7 +14,7 @@
 
 4. 加自己血
 
-5. 
+5.
 
 方法一︰
 為每個 ability 寫一個 function，然後類似的分成同一類
@@ -42,4 +49,3 @@ def effect(self, opponent, state):
 
 防止陷入異常狀態類
 名︰不眠、脫皮、免疫
-
